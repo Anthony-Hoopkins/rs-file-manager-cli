@@ -3,7 +3,7 @@ import { appEndListener } from './app/app-end-listener.js';
 import { Transform } from 'stream';
 import { cliCommands } from './utils/consts/cli-commands.js';
 import { getHomeDir, osModule } from './app/os.module.js';
-import { navigationUp } from './app/navigation.module.js';
+import { changeDirectory, navigationUp, redirectToInitDir, writeCurrentFolderList } from './app/navigation.module.js';
 
 let username = '';
 
@@ -61,28 +61,32 @@ const start = async () => {
 
         workingStream.on('data', (chunk) => {
             const inputsArray = chunk.toString().trim().split(' ');
-            // console.log(inputsArray)
 
             switch (inputsArray[0]) {
                 case cliCommands.up:
                     navigationUp();
                     break;
+
                 case cliCommands.cd:
-                    process.stdout.write('CD');
+                    changeDirectory(inputsArray[1]);
                     break;
+
                 case cliCommands.ls:
-                    process.stdout.write('LS');
+                    writeCurrentFolderList();
                     break;
 
                 case cliCommands.cat:
                     process.stdout.write('READ BY CAT');
                     break;
+
                 case cliCommands.add:
                     process.stdout.write('ADDDD');
                     break;
+
                 case cliCommands.os:
                     osModule(inputsArray[1]);
                     break;
+
                 default:
                     process.stdout.write('UNKNOWN COMMAND');
             }
@@ -93,12 +97,7 @@ const start = async () => {
 
         process.stdout.write(`Welcome to the File Manager, ${username}! \n`);
 
-        try {
-            process.chdir(getHomeDir());
-            process.stdout.write(`You are currently in ${process.cwd()}`);
-        } catch (err) {
-            console.log('chdir error: ' + err);
-        }
+        redirectToInitDir();
 
         process.stdout.write('\n');
 
@@ -109,8 +108,8 @@ const start = async () => {
         // await pipeline(process.stdin, workingStream, process.stdout)
 
         appEndListener(workingStream, username);
-    } catch (e) {
-        console.log('');
+    } catch {
+        console.log('Operation failed. Please try again.!')
     }
 };
 
