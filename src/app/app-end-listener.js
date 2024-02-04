@@ -1,7 +1,7 @@
-export const appEndListener = (ws, username = 'User') => {
+export const appEndListener = (workingStream, username = 'User') => {
     const message = `Thank you for using the File Manager, ${username}, goodbye!`;
 
-    ws.on('finish', () => {
+    workingStream.on('finish', () => {
         appStop(username);
     });
 
