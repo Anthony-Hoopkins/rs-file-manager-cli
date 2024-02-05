@@ -3,9 +3,11 @@ import { cliCommands } from '../utils/consts/cli-commands.js';
 import { changeDirectory, navigationUp, redirectToInitDir, writeCurrentFolderList } from './navigation.module.js';
 import { osModule } from './os.module.js';
 import { appEndListener } from './app-end-listener.js';
-import { parseArgs } from './parse-args.js';
+import { parseArgs } from './parse.module.js';
 import { calculateHash } from './hash.module.js';
 import { compressDecompressFile } from './zip.module.js';
+import { copyFile, createFile, deleteFile, moveFile, readAndPrint, renameFile } from './file.module.js';
+import { getFullPath } from '../utils/helpers/path.helper.js';
 
 const app = async () => {
     const username = parseArgs()?.['username'] || 'unknown';
@@ -26,7 +28,7 @@ const app = async () => {
         }
     });
 
-    workingStream.on('data', (chunk) => {
+    await workingStream.on('data', (chunk) => {
         const inputsArray = chunk.toString().trim().split(' ');
 
         switch (inputsArray[0]) {
@@ -41,10 +43,22 @@ const app = async () => {
                 break;
 
             case cliCommands.cat:
-                process.stdout.write('READ BY CAT');
+                readAndPrint(getFullPath(inputsArray[1]));
                 break;
             case cliCommands.add:
-                process.stdout.write('ADDDD');
+                createFile(getFullPath(inputsArray[1]));
+                break;
+            case cliCommands.rn:
+                renameFile(getFullPath(inputsArray[1]), getFullPath(inputsArray[2]));
+                break;
+            case cliCommands.cp:
+                copyFile(getFullPath(inputsArray[1]), getFullPath(inputsArray[2]));
+                break;
+            case cliCommands.mv:
+                moveFile(getFullPath(inputsArray[1]), getFullPath(inputsArray[2]));
+                break;
+            case cliCommands.rm:
+                deleteFile(getFullPath(inputsArray[1]));
                 break;
 
             case cliCommands.os:
@@ -52,7 +66,7 @@ const app = async () => {
                 break;
 
             case cliCommands.hash:
-                calculateHash(inputsArray[1]);
+                calculateHash(getFullPath(inputsArray[1]));
                 break;
 
             case cliCommands.compress:
@@ -66,8 +80,10 @@ const app = async () => {
                 process.stdout.write('UNKNOWN COMMAND, try again.');
         }
 
-        process.stdout.write('\n');
-        process.stdout.write(`You are currently in ${process.cwd()} \n`);
+        setTimeout(() => {
+            process.stdout.write('\n');
+            process.stdout.write(`You are currently in ${process.cwd()} \n`);
+        }, 150);
     });
 
     process.stdout.write(`Welcome to the File Manager, ${username}! \n`);
@@ -79,8 +95,6 @@ const app = async () => {
     process.stdout.on('error', (err) => {
         console.log(err);
     });
-
-    // await pipeline(process.stdin, workingStream, process.stdout)
 
     appEndListener(workingStream, username);
 };

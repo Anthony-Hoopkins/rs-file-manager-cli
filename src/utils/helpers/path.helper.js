@@ -10,3 +10,11 @@ export const getNecessaryPathInCurrentDir = (importMetaUrl, name) => {
     const __dirname = getCurrentDirName(importMetaUrl);
     return path.join(__dirname, name);
 };
+
+export const getFullPath = (fileName) => {
+    try {
+        return path.join(process.cwd(), fileName);
+    } catch {
+        console.log('Operation failed. Please try again!');
+    }
+};

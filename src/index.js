@@ -4,7 +4,7 @@ const start = async () => {
     try {
         await app();
     } catch {
-        console.log('Operation failed. Please try again!')
+        console.error('Operation failed. Please try again! G');
     }
 };
 
