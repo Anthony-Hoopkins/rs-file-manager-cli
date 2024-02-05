@@ -9,7 +9,8 @@ export const osModule = (arg) => {
             console.log(`Default system End-Of-Line: ${os.endianness()}`);
             break;
         case osCommandArgs.cpus:
-            console.log(`Host machine CPUs info: \n amount: ${os.availableParallelism()}; \n model: ${os.cpus()[0].model }; \n clock rate: ${os.cpus()[0].speed };`);
+            console.log(`Host machine CPUs info: \n amount: ${os.availableParallelism()}; model: ${os.cpus()[0].model };`);
+            console.log(os.cpus().map((data) => ({ model: data.model, speed: data.speed })));
             break;
         case osCommandArgs.homedir:
             console.log(`Home directory: ${getHomeDir()}`);
