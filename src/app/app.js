@@ -4,6 +4,8 @@ import { changeDirectory, navigationUp, redirectToInitDir, writeCurrentFolderLis
 import { osModule } from './os.module.js';
 import { appEndListener } from './app-end-listener.js';
 import { parseArgs } from './parse-args.js';
+import { calculateHash } from './hash.module.js';
+import { compressDecompressFile } from './zip.module.js';
 
 const app = async () => {
     const username = parseArgs()?.['username'] || 'unknown';
@@ -50,10 +52,18 @@ const app = async () => {
                 break;
 
             case cliCommands.hash:
+                calculateHash(inputsArray[1]);
+                break;
+
+            case cliCommands.compress:
+                compressDecompressFile(inputsArray[1], inputsArray[2], true);
+                break;
+            case cliCommands.decompress:
+                compressDecompressFile(inputsArray[1], inputsArray[2], false);
                 break;
 
             default:
-                process.stdout.write('UNKNOWN COMMAND');
+                process.stdout.write('UNKNOWN COMMAND, try again.');
         }
 
         process.stdout.write('\n');
