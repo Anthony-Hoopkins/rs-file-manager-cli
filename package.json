@@ -7,7 +7,6 @@
   },
   "type": "module",
   "scripts": {
-    "cli:args": "node src/cli/args.js --some-arg value1 --other 1337 --arg2 42",
     "start": "node src/index.js",
     "start:default": "node src/index.js -- --username=Default_user"
   },

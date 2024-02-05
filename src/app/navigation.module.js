@@ -5,6 +5,9 @@ import { readdir } from 'node:fs/promises';
 const redirectToInitDir = () => {
     try {
         process.chdir(getHomeDir());
+
+        // changeDirectory('projects/BACKENDS/RSnode/rs-file-manager-cli/src/files-for-tests'); // for debugging
+
         process.stdout.write(`You are currently in ${process.cwd()}`);
     } catch (err) {
         console.log('chdir error: ' + err);
@@ -27,7 +30,7 @@ const writeCurrentFolderList = async () => {
 
         const tableList = list.reduce((result, liName) => {
             const type = pathType(liName);
-            result[type].push({ Name: liName, Type: pathType(liName) });
+            result[type].push({ Name: liName, Type: type });
 
             return result;
         }, { file: [], directory: [] });

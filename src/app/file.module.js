@@ -1,5 +1,7 @@
-import { createReadStream, createWriteStream } from 'fs';
-import { access, rename, rm, writeFile } from 'fs/promises';
+import { createReadStream } from 'fs';
+import { access, cp, rename, rm, writeFile } from 'fs/promises';
+import { mkdir } from 'node:fs/promises';
+import path from 'path';
 
 // For testing purposes (use it step by step):
 
@@ -44,18 +46,9 @@ const renameFile = async (filePath, newFilePath) => {
 
 const copyFile = async (filePath, newFilePath) => {
     try {
-        await access(filePath);
-
-        const readStream = createReadStream(filePath);
-        const writeStream = createWriteStream(newFilePath);
-
-        readStream.pipe(writeStream);
-        readStream.on('end', () => {
-            console.log('Operation completed');
-        });
-
-        // await cp(filePath, newFilePath, { recursive: true }); // better way
-        // console.log('Operation completed');
+        await mkdir(path.dirname(newFilePath));
+        await cp(filePath, newFilePath, { recursive: true });
+        console.log('Operation completed');
     } catch {
         console.error('Copying failed. Please try again.');
     }
@@ -63,19 +56,8 @@ const copyFile = async (filePath, newFilePath) => {
 
 const moveFile = async (currentFilePath, newFilePath) => {
     try {
-        await access(currentFilePath);
-
-        const readStream = createReadStream(currentFilePath);
-        const writeStream = createWriteStream(newFilePath);
-
-        readStream.pipe(writeStream);
-        readStream.on('end', async () => {
-            await rm(currentFilePath);
-            console.log('Operation completed');
-        });
-
-        // await rename(currentFilePath, newFilePath); // better way
-        // console.log('Operation completed');
+        await rename(currentFilePath, newFilePath); // better way
+        console.log('Operation completed');
     } catch {
         console.error('Moving failed. Please try again.');
     }
