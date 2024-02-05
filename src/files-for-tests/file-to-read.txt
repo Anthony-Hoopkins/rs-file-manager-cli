@@ -1,0 +1,5 @@
+My content
+for File Manager
+should be
+printed
+into console!
